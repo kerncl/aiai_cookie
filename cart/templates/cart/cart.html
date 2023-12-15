@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block header %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+{% endblock %}
+{% block content %}
+  <div class="container mx-auto mt-10">
+    <div class="md:flex shadow-md my-10">
+        <div class="md:w-3/4 bg-white px-10 py-10">
+            <div class="flex justify-between">
+              <h1 class="font-semibold text-2xl">Shopping Cart</h1>
+              <h2 class="font-semibold text-2xl">{{ cart.total_item }} Items</h2>
+            </div>
+            <div class="flex mt-10 mb-5">
+                  <h3 class="font-semibold text-gray-600 md:text-base text-xs uppercase w-2/5">Product Details</h3>
+                  <h3 class="font-semibold text-center text-gray-600 md:text-base text-xs uppercase w-1/5 text-center">Quantity</h3>
+                  <h3 class="font-semibold text-center text-gray-600 md:text-base text-xs uppercase w-1/5 text-center">Price</h3>
+                  <h3 class="font-semibold text-center text-gray-600 md:text-base text-xs uppercase w-1/5 text-center">Total</h3>
+            </div>
+            <!--Order List -->
+            {% for p in cart %}
+                <div class="flex items-center hover:bg-gray-100 -mx-8 px-6 py-5">
+                    <div class="flex w-2/5"> <!-- product -->
+                        <div class="w-20">
+<!--                        <img class="h-24" src="https://drive.google.com/uc?id=18KkAVkGFvaGNqPy2DIvTqmUH_nk39o3z" alt="">-->
+                            <img class="h-24" src="{{ p.image }}" alt="">
+                        </div>
+                    <div class="flex flex-col justify-between ml-4 flex-grow">
+                        <span class="font-bold text-sm">{{ p.name }}</span>
+                        <form id='remove' action="{% url 'cart:remove' p.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" value="remove">
+                            <a href="#" onclick="document.getElementById('remove').submit();" class="font-semibold hover:text-red-500 text-gray-500 text-xs">Remove</a>
+                        </form>
+
+                    </div>
+                </div>
+                <div class="flex justify-center w-1/5">
+                    <svg class="fill-current text-gray-600 w-3" viewBox="0 0 448 512"><path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/>
+                    </svg>
+                    <input class="mx-2 border text-center w-11" type="text" value="{{ p.quantity }}">
+                    <svg class="fill-current text-gray-600 w-3" viewBox="0 0 448 512">
+                    <path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/>
+                    </svg>
+                </div>
+                    <span class="text-center w-1/5 font-semibold text-xs md:text-sm">RM {{p.price}}</span>
+                    <span class="text-center w-1/5 font-semibold text-xs md:text-sm">RM {{p.total_price}}</span>
+                </div>
+            {% empty %}
+                <h1 class="font-semibold text-2xl text-center">No Order</h1>
+            {% endfor %}
+        </div>
+        <div class="md:w-1/4 px-8 py-10">
+            {% if cart.total_item %}
+                <h1 class="font-semibold text-2xl border-b pb-8">Order Summary</h1>
+                <div class="flex justify-between mt-10 mb-5">
+                  <span class="font-semibold text-sm uppercase">Items {{ cart|length }}</span>
+                  <span class="font-semibold text-sm">RM {{ cart.total_price }}</span>
+                </div>
+                <div class="border-t mt-8">
+                    <div class="flex font-semibold justify-between py-6 text-sm uppercase">
+                        <span>Total cost</span>
+                        <span>RM {{ cart.total_price}}</span>
+                    </div>
+                    <span class="font-semibold text-sm uppercase">Pick up date</span>
+                    <form action="{% url 'cart:checkout' %}" method="post">
+                        {% csrf_token %}
+                        <div date-rangepicker class="flex items-center pb-5">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-500 border-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                                    </svg>
+                                </div>
+                                <input name="start" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date start">
+                            </div>
+                            <span class="mx-4 text-gray-500">to</span>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-500 border-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                                    </svg>
+                                </div>
+                                <input name="end" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date end">
+                            </div>
+                        </div>
+                        <button class="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full">Checkout</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <a href="{% url 'shop:homepage' %}" class="flex font-semibold text-indigo-600 text-sm mt-10 pb-10">
+        <svg class="fill-current mr-2 text-indigo-600 w-4" viewBox="0 0 448 512"><path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"/></svg>
+        Continue Shopping
+    </a>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/datepicker.min.js"></script>
+
+{% endblock %}

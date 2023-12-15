@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Registration {% endblock %}
+{% block content %}
+    <div class="flex justify-center">
+        <div class="p-10 w-full md:w-1/2 bg-white rounded-xl shadow-lg flex flex-col space-x-4">
+            <h1 class="text-2xl pb-5 font-medium text-black ">Register</h1>
+            <form method="post" action="{% url 'account:register' %}">
+                <div class="relative z-0 w-full mb-6 group">
+                    <input type="email" name="email" id="email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                    <label for="email" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email:</label>
+                </div>
+                <div class="relative z-0 w-full mb-6 group">
+                    <input type="password" name="password" id="password" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                    <label for="password" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password:</label>
+                </div>
+                {% csrf_token %}
+                <button type="submit" id="signupbtn" class="text-white bg-orange-500 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Register</button>
+            </form>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-analytics.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.19.0/firebase-auth.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyDPJ83SPppiKSz4JjERtNUdIef6ehs4-wU",
+    authDomain: "aiai-c60a8.firebaseapp.com",
+    projectId: "aiai-c60a8",
+    storageBucket: "aiai-c60a8.appspot.com",
+    messagingSenderId: "457291004603",
+    appId: "1:457291004603:web:df36f0f3147141f1efc79e",
+    measurementId: "G-73KQDVCZEP"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+
+  var signupbtn=document.getElementById("signupbtn")
+  var emailsignup=document.getElementById("email")
+  var passswordsignup=document.getElementById("password")
+
+
+  //================Signup With Email and Password==========================
+  signupbtn.onclick=function(){
+      signupbtn.disabled=true;
+      signupbtn.textContent="Registering Your Account! Please Wait";
+      firebase.auth().createUserWithEmailAndPassword(emailsignup.value,passswordsignup.value).then(function(response){
+        sendingVerifyEmail(signupbtn);
+            console.log(response);
+      })
+      .catch(function(error){
+        signupbtn.disabled=false;
+        signupbtn.textContent="Sign Up";
+          console.log(error);
+      })
+
+
+  }
+
+  function sendingVerifyEmail(button){
+     firebase.auth().currentUser.sendEmailVerification().then(function(response){
+                signupbtn.disabled=false;
+        signupbtn.textContent="Sign Up S";
+        console.log('successful register');
+        console.log(response);
+     })
+     .catch(function(error){
+                signupbtn.disabled=false;
+        signupbtn.textContent="Sign Up S";
+
+         console.log(error);
+     })
+  }
+  //================End Signup With Email and Password======================
+    </script>
+
+{% endblock %}

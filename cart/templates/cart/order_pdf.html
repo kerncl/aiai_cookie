@@ -1,0 +1,51 @@
+<html>
+    {% load static %}
+    <head>
+        <link href="{% static 'css/pdf.css' %}" rel="stylesheet">
+    </head>
+    <body>
+<!--        <h1>@i@i Cookie</h1>-->
+        <img src="{% static 'img/logo_low.png' %}" width="500" height="100" alt="AIAI Logo" />
+        <p>
+            Inovice no. #{{ order.order_id }}<br>
+            <span class="secondary">
+                Created {{ order.created | date:"M d, Y" }}
+            </span>
+        </p>
+        <h3>Bill to</h3>
+        <p>
+            CHIN LINN KERN<br>
+            kerncl@hhotmail.com<br>
+            303-2-1 TAMAN GREEN FIELD,<br>
+            11500 AIR ITAM, PULAU PINANG <br>
+        </p>
+        <h3>Item bought</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order %}
+                    <tr class="row{% cycle '1' '2' %}">
+                        <td>{{ item.product }}</td>
+                        <td class="num">RM {{ item.price }}</td>
+                        <td class="num">{{ item.quantity }}</td>
+                        <td class="num">RM {{ item.total_price }}</td>
+                    </tr>
+                {% endfor %}
+                <tr class="total">
+                    <td colspan="3">Total</td>
+                    <td class="num">RM {{ cart.total_price }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <span class="pending">
+            Pending Payment
+        </span>
+    </body>
+</html>
